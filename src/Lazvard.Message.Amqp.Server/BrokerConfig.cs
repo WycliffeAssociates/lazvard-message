@@ -14,6 +14,8 @@ public class TopicSubscriptionConfig
     public Duration LockDuration { get; set; } = Duration.FromMinutes(1);
     public int MaxDeliveryCount { get; set; } = 50;
     public Duration TimeToLive { get; set; } = Duration.FromDays(14);
+    
+    public IEnumerable<CorrelationFilterConfig> CorrelationFilters { get; set; } = Array.Empty<CorrelationFilterConfig>();
 }
 
 
@@ -39,4 +41,11 @@ public class BrokerConfig
     public uint MaxMessageSize { get; set; } = 64 * 1024 * 1024;
 
     public IEnumerable<TopicConfig> Topics { get; set; } = Array.Empty<TopicConfig>();
+}
+
+public class CorrelationFilterConfig
+{
+    public bool IsSystem { get; set; } = false;
+    public string PropertyName { get; set; }
+    public string PropertyValue { get; set; }
 }

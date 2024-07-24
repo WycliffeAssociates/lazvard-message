@@ -29,6 +29,23 @@ public sealed class Subscription : SubscriptionBase
         logger.LogTrace("process message {MessageSeqNo} in subscription {Subscription}",
             message.GetTraceId(), Name);
 
+        if (config.CorrelationFilters.Any())
+        {
+            foreach(var filter in config.CorrelationFilters)
+            {
+                if (filter.IsSystem)
+                {
+                    continue;
+                }
+                if (!message.GetAppProperties(filter.PropertyName, out var value) || value != filter.PropertyValue)
+                {
+                    logger.LogTrace("message {MessageSeqNo} in subscription {Subscription} is filtered out",
+                        message.GetTraceId(), Name);
+                    return;
+                }
+            }
+        }
+
         var delivered = false;
 
         var activeConsumers = GetActiveConsumers();
